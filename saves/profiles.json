@@ -1,0 +1,171 @@
+{
+  "lastActive": "Thuyền Trưởng Hải Quân",
+  "profiles": {
+    "thuyền trưởng hải quân": {
+      "username": "Thuyền Trưởng Hải Quân",
+      "maxUnlockedStage": 9,
+      "unlockedUnits": [
+        "DEN_DEN_MUSHI",
+        "MARINE_RIFLE",
+        "MARINE_SHIELD",
+        "SEASTONE_MINE",
+        "BUSTER_CANNON",
+        "MARINE_CAPTAIN",
+        "AOKIJI_ICE",
+        "CROCODILE",
+        "MIHAWK",
+        "AKAINU"
+      ],
+      "stageStars": {
+        "1": 3,
+        "2": 3,
+        "3": 3,
+        "4": 3,
+        "5": 3,
+        "6": 3,
+        "7": 3,
+        "8": 3,
+        "9": 3
+      },
+      "selectedDeck": [
+        "DEN_DEN_MUSHI",
+        "SEASTONE_MINE",
+        "BUSTER_CANNON",
+        "MARINE_CAPTAIN",
+        "AOKIJI_ICE",
+        "CROCODILE",
+        "MIHAWK",
+        "AKAINU"
+      ],
+      "goldBars": 7,
+      "maxDeckSlots": 8,
+      "shopUpgrades": {
+        "EXTRA_SLOT": 1,
+        "ADMIRAL_SKILL_ICE": 0,
+        "ADMIRAL_SKILL_MAGMA": 0,
+        "DF_MERA_SHOOTER": 0,
+        "DF_KIRA_DEFENSE": 0,
+        "DF_GOLD_ADMIRAL": 0
+      },
+      "updatedAt": 1794994028231
+    },
+    "thành tài": {
+      "username": "Thành Tài",
+      "maxUnlockedStage": 9,
+      "unlockedUnits": [
+        "DEN_DEN_MUSHI",
+        "MARINE_RIFLE",
+        "MARINE_SHIELD",
+        "SEASTONE_MINE",
+        "BUSTER_CANNON",
+        "MARINE_CAPTAIN",
+        "AOKIJI_ICE",
+        "CROCODILE",
+        "MIHAWK",
+        "AKAINU"
+      ],
+      "stageStars": {
+        "1": 3,
+        "2": 3,
+        "3": 3,
+        "4": 3,
+        "5": 3,
+        "6": 3,
+        "7": 3,
+        "8": 3,
+        "9": 3
+      },
+      "selectedDeck": [
+        "DEN_DEN_MUSHI",
+        "BUSTER_CANNON",
+        "MARINE_CAPTAIN",
+        "AOKIJI_ICE",
+        "CROCODILE",
+        "MIHAWK",
+        "AKAINU"
+      ],
+      "goldBars": 3,
+      "maxDeckSlots": 7,
+      "shopUpgrades": {
+        "EXTRA_SLOT": 0,
+        "ADMIRAL_SKILL_ICE": 0,
+        "ADMIRAL_SKILL_MAGMA": 0,
+        "DF_MERA_SHOOTER": 0,
+        "DF_KIRA_DEFENSE": 0,
+        "DF_GOLD_ADMIRAL": 0
+      },
+      "updatedAt": 1794551043631
+    },
+    "test": {
+      "username": "Test",
+      "maxUnlockedStage": 5,
+      "unlockedUnits": [
+        "DEN_DEN_MUSHI",
+        "MARINE_RIFLE",
+        "MARINE_SHIELD",
+        "SEASTONE_MINE",
+        "BUSTER_CANNON",
+        "MARINE_CAPTAIN"
+      ],
+      "stageStars": {
+        "1": 3,
+        "2": 3,
+        "3": 3,
+        "4": 3
+      },
+      "selectedDeck": [
+        "DEN_DEN_MUSHI",
+        "MARINE_RIFLE",
+        "MARINE_SHIELD",
+        "SEASTONE_MINE",
+        "BUSTER_CANNON",
+        "MARINE_CAPTAIN"
+      ],
+      "goldBars": 0,
+      "maxDeckSlots": 7,
+      "shopUpgrades": {
+        "EXTRA_SLOT": 0,
+        "ADMIRAL_SKILL_ICE": 0,
+        "ADMIRAL_SKILL_MAGMA": 0,
+        "DF_MERA_SHOOTER": 0,
+        "DF_KIRA_DEFENSE": 0,
+        "DF_GOLD_ADMIRAL": 0
+      },
+      "updatedAt": 1794993644537
+    },
+    "tai1": {
+      "username": "Tai1",
+      "maxUnlockedStage": 4,
+      "unlockedUnits": [
+        "DEN_DEN_MUSHI",
+        "MARINE_RIFLE",
+        "MARINE_SHIELD",
+        "SEASTONE_MINE",
+        "BUSTER_CANNON"
+      ],
+      "stageStars": {
+        "1": 3,
+        "2": 3,
+        "3": 3
+      },
+      "selectedDeck": [
+        "DEN_DEN_MUSHI",
+        "MARINE_RIFLE",
+        "MARINE_SHIELD",
+        "SEASTONE_MINE",
+        "BUSTER_CANNON"
+      ],
+      "goldBars": 0,
+      "maxDeckSlots": 7,
+      "shopUpgrades": {
+        "EXTRA_SLOT": 0,
+        "ADMIRAL_SKILL_ICE": 0,
+        "ADMIRAL_SKILL_MAGMA": 0,
+        "DF_MERA_SHOOTER": 0,
+        "DF_KIRA_DEFENSE": 0,
+        "DF_GOLD_ADMIRAL": 0
+      },
+      "updatedAt": 1794991792618
+    }
+  }
+}

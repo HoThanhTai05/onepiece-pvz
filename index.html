@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0c1017">
+
+  <meta name="apple-mobile-web-app-title" content="One Piece PvZ">
+  <meta name="application-name" content="One Piece PvZ">
+  <title>One Piece PvZ</title>
+  <link rel="apple-touch-icon" href="assets/images/logo.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/images/logo.png">
+  <link rel="icon" type="image/png" href="assets/images/logo.png">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Ép tràn sát 4 mép màn hình iPhone (bỏ qua giới hạn tai thỏ & thanh Home dưới đáy) */
+    html, body {
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      overflow: hidden !important;
+      background: #000 !important;
+    }
+    #gameContainer {
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: none !important;
+      max-height: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      display: block !important;
+    }
+    #gameCanvas {
+      position: fixed !important;
+      left: 0 !important;
+      top: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: none !important;
+      max-height: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      display: block !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="gameContainer">
+    <!-- Nút Toàn Màn Hình trên Điện Thoại -->
+    <button id="fullscreenBtn" title="Chế độ toàn màn hình">⛶ Toàn màn hình</button>
+
+    <!-- Khung Game Canvas Chuẩn 1068x600 -->
+    <canvas id="gameCanvas"></canvas>
+    <!-- Video nền chạy 1 lần rồi tự đứng im ở khung hình cuối (không có thuộc tính loop) -->
+    <video
+      id="introVideoBg"
+      src="assets/intro_bg/intro_bg.mp4"
+      autoplay
+      muted
+      playsinline
+      preload="auto"
+      style="display: none;"
+    ></video>
+
+    <!-- Nhắc Xoay Ngang trên Điện Thoại -->
+    <div id="rotateHint">
+      <div class="icon">🔄</div>
+      <h2>Xoay Ngang Hoặc Bấm Toàn Màn Hình</h2>
+      <p>Trải nghiệm chiến đấu 16:9 Hải Quân vs Tứ Hoàng đạt chất lượng tốt nhất khi xoay ngang toàn màn hình!</p>
+      <div class="rotate-actions">
+        <button id="rotateFsBtn" type="button">⛶ Toàn màn hình ngang</button>
+        <button id="skipRotateBtn" type="button">▶ Vẫn chơi ngay</button>
+      </div>
+    </div>
+
+    <!-- Hộp Thoại Tài Khoản Thuyền Trưởng (Lưu tiến độ vĩnh viễn không mất khi F5) -->
+    <div id="accountModal" class="hidden" role="dialog" aria-modal="true" aria-labelledby="accModalTitle">
+      <div class="acc-card">
+        <div class="acc-header">
+          <h2 id="accModalTitle">🪪 TÀI KHOẢN THUYỀN TRƯỞNG</h2>
+          <button id="closeAccountModalBtn" type="button" class="acc-close">✕</button>
+        </div>
+        <p class="acc-sub">
+          Tiến độ màn chơi & danh sách lính Hải Quân được lưu vĩnh viễn theo <strong>Tên Tài Khoản</strong> trên máy chủ & trình duyệt.
+          Tải lại trang (F5) hay đổi điện thoại/máy tính vẫn giữ nguyên tiến độ!
+        </p>
+
+        <div class="acc-current-badge">
+          Đang đăng nhập: <strong id="currentAccLabel">Thuyền Trưởng</strong>
+          <span id="accSyncStatus" class="sync-pill">☁️ Đã lưu đồng bộ</span>
+        </div>
+
+        <form id="accountForm" class="acc-form">
+          <input
+            id="accountNameInput"
+            type="text"
+            maxlength="28"
+            placeholder="Nhập tên tài khoản (VD: Luffy, Đô Đốc Hải...)"
+            autocomplete="off"
+          >
+          <div class="acc-form-btns">
+            <button id="loginOrCreateBtn" type="submit" class="btn-primary">🔑 Tạo Mới / Đăng Nhập</button>
+            <button id="saveCurrentAsBtn" type="button" class="btn-save-as">💾 Lưu Tiến Độ Hiện Tại Vào Tên Này</button>
+          </div>
+        </form>
+
+        <div class="acc-list-title">📜 Danh sách tài khoản đã lưu:</div>
+        <div id="accountList" class="acc-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

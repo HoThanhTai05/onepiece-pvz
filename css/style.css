@@ -1,0 +1,367 @@
+/* One Piece Marine PvZ Stylesheet - Version 4 Fullscreen 16:9 + Account Modal */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #06090e;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  touch-action: none;
+}
+
+#gameContainer {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  width: 100dvw;
+  height: 100dvh;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle at center, #1a2433 0%, #06090e 100%);
+  overflow: hidden;
+}
+
+#gameCanvas {
+  display: block;
+  background-color: #000;
+  box-shadow: 0 8px 36px rgba(0, 0, 0, 0.85);
+  border-radius: 4px;
+  touch-action: none;
+}
+
+/* Nút Toàn màn hình góc trên phải */
+#fullscreenBtn {
+  position: absolute;
+  top: max(8px, env(safe-area-inset-top));
+  right: max(8px, env(safe-area-inset-right));
+  z-index: 100;
+  background: rgba(16, 24, 36, 0.9);
+  color: #f1c40f;
+  border: 1.5px solid #f1c40f;
+  border-radius: 8px;
+  padding: 6px 11px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+#fullscreenBtn:hover {
+  background: #f1c40f;
+  color: #1e272e;
+}
+
+#fullscreenBtn:active {
+  transform: scale(0.95);
+}
+
+/* Nhắc xoay ngang trên mobile dọc */
+#rotateHint {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 14, 21, 0.94);
+  color: #ffffff;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  text-align: center;
+  padding: 24px;
+}
+
+#rotateHint .icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  animation: rotateIcon 2s ease-in-out infinite;
+}
+
+#rotateHint h2 {
+  color: #f1c40f;
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+#rotateHint p {
+  color: #bdc3c7;
+  font-size: 14px;
+  max-width: 300px;
+  margin-bottom: 20px;
+}
+
+.rotate-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 240px;
+}
+
+#rotateFsBtn,
+#skipRotateBtn {
+  padding: 11px 16px;
+  border-radius: 9px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+}
+
+#rotateFsBtn {
+  background: linear-gradient(135deg, #27ae60, #2ecc71);
+  color: #ffffff;
+  border: 1.5px solid #ffffff;
+}
+
+#skipRotateBtn {
+  background: rgba(255, 255, 255, 0.12);
+  color: #f1c40f;
+  border: 1.5px solid rgba(241, 196, 15, 0.65);
+}
+
+/* Hộp thoại Tài Khoản Người Chơi (V4) */
+#accountModal {
+  position: absolute;
+  inset: 0;
+  z-index: 1200;
+  background: rgba(6, 10, 16, 0.86);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  touch-action: auto;
+}
+
+#accountModal.hidden {
+  display: none;
+}
+
+.acc-card {
+  width: 100%;
+  max-width: 520px;
+  max-height: 92dvh;
+  overflow-y: auto;
+  background: linear-gradient(180deg, #1a2433 0%, #101722 100%);
+  border: 2.5px solid #f1c40f;
+  border-radius: 14px;
+  padding: 18px 20px;
+  color: #ecf0f1;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.85);
+  touch-action: pan-y;
+}
+
+.acc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.acc-header h2 {
+  font-size: 18px;
+  color: #f1c40f;
+  letter-spacing: 0.3px;
+}
+
+.acc-close {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.acc-close:hover {
+  background: #e74c3c;
+}
+
+.acc-sub {
+  font-size: 12.5px;
+  color: #bdc3c7;
+  line-height: 1.45;
+  margin-bottom: 12px;
+}
+
+.acc-current-badge {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: rgba(241, 196, 15, 0.12);
+  border: 1px solid rgba(241, 196, 15, 0.45);
+  border-radius: 9px;
+  padding: 9px 12px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.acc-current-badge strong {
+  color: #f1c40f;
+}
+
+.sync-pill {
+  font-size: 11px;
+  background: rgba(46, 204, 113, 0.2);
+  color: #2ecc71;
+  border: 1px solid rgba(46, 204, 113, 0.45);
+  padding: 2px 8px;
+  border-radius: 99px;
+}
+
+.acc-form {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-bottom: 14px;
+}
+
+#accountNameInput {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1.8px solid #3c4f65;
+  background: #0b1018;
+  color: #ffffff;
+  font-size: 14px;
+  outline: none;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+#accountNameInput:focus {
+  border-color: #f1c40f;
+}
+
+.acc-form-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.acc-form-btns button {
+  flex: 1;
+  min-width: 150px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #27ae60, #2ecc71);
+  color: #ffffff;
+}
+
+.btn-save-as {
+  background: linear-gradient(135deg, #2980b9, #3498db);
+  color: #ffffff;
+}
+
+.acc-list-title {
+  font-size: 12.5px;
+  font-weight: bold;
+  color: #f1c40f;
+  margin-bottom: 8px;
+}
+
+.acc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  max-height: 195px;
+  overflow-y: auto;
+}
+
+.acc-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 11px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.acc-item.active {
+  border-color: #2ecc71;
+  background: rgba(46, 204, 113, 0.12);
+}
+
+.acc-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.acc-item-name {
+  font-size: 14px;
+  font-weight: bold;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.acc-item-meta {
+  font-size: 11.5px;
+  color: #95a5a6;
+}
+
+.acc-item-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.acc-item-actions button {
+  padding: 6px 10px;
+  border-radius: 7px;
+  border: none;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-use {
+  background: #f1c40f;
+  color: #181828;
+}
+
+.btn-del {
+  background: rgba(231, 76, 60, 0.25);
+  color: #ff7675;
+  border: 1px solid rgba(231, 76, 60, 0.5) !important;
+}
+
+@keyframes rotateIcon {
+  0% { transform: rotate(0deg); }
+  50% { transform: rotate(90deg); }
+  100% { transform: rotate(0deg); }
+}
