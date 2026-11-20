@@ -190,7 +190,8 @@ export class Warship {
     this.y = pt.y;
     const sc = (pt.scale || 1) * 0.96;
 
-    const bobY = this.isActivated ? Math.sin(this.bobPhase * 18) * 2.5 : Math.sin(this.bobPhase) * 1.5;
+    // Bỏ nhấp nhô khi đứng chờ (bobY = 0), chỉ rung khi kích hoạt chiêu
+    const bobY = this.isActivated ? Math.sin(this.bobPhase * 18) * 2.5 : 0;
     const shakeX = this.isActivated ? (Math.random() - 0.5) * 5 : 0;
     const x = this.x + shakeX;
     const y = this.y + bobY;
@@ -225,14 +226,17 @@ export class Warship {
       ctx.restore();
     }
 
-    // 2. VẼ NHÂN VẬT NGŨ LÃO TINH (ĐÃ THU NHỎ LẠI 90x90 VÀ LÙI QUA TRÁI)
+    // 2. VẼ NHÂN VẬT NGŨ LÃO TINH (CHÂN ĐỨNG VỮNG + NHỊP THỞ UY NGHIÊM)
     ctx.save();
-    ctx.translate(x, y);
+    // Neo tọa độ ngay dưới bàn chân (y + 18 * sc) để chân không bị nhấc khỏi mặt đất
+    ctx.translate(x, y + 18 * sc);
     if (this.isActivated) {
       ctx.globalAlpha = fadeOut;
       ctx.scale(sc * 1.12, sc * 1.12);
     } else {
-      ctx.scale(sc, sc);
+      // Co giãn nhẹ theo chiều dọc (2.2%) tạo nhịp thở uy nghiêm mà chân vẫn đứng im
+      const breatheY = 1 + Math.sin(this.bobPhase) * 0.022;
+      ctx.scale(sc, sc * breatheY);
     }
 
     const elders = [
@@ -247,14 +251,14 @@ export class Warship {
     const sprite = assets ? assets.get(spriteKey) : null;
 
     if (sprite) {
-      // Kích thước 90x90 cân đối hơn (nhỏ hơn 108 cũ)
       const drawW = 100;
       const drawH = 100;
-      ctx.drawImage(sprite, -drawW / 2, -drawH + 18, drawW, drawH);
+      // Vẽ ngược từ điểm neo bàn chân lên trên (-drawH)
+      ctx.drawImage(sprite, -drawW / 2, -drawH, drawW, drawH);
     } else {
       ctx.font = '50px sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('👴', 0, 0);
+      ctx.fillText('👴', 0, -18);
     }
     ctx.restore();
 

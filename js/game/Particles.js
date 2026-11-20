@@ -114,32 +114,53 @@ export class ShockwaveRing {
 
 /**
  * Sóng Hắc Kiếm Yoru của Mihawk bay dọc theo hàng phối cảnh (colPos)
+ * Đã sửa lỗi ReferenceError (pirates/onHitPirate) + nâng cấp hiệu ứng Trảm Kích Hắc Kiếm
  */
 export class AnimeSlashWave {
-  constructor(startColPos, row) {
+  constructor(startColPos, row, pirates = [], onHitPirate = null) {
     this.colPos = startColPos;
     this.row = row;
-    this.speed = 760;
+    this.speed = 820; // Tốc độ lướt nhanh và dứt khoát hơn
     this.life = 1.45;
     this.maxLife = 1.45;
     this.pirates = pirates;
     this.onHitPirate = onHitPirate;
     this.hitSet = new Set();
+    this.age = 0;
+
+    // Tạo sẵn các hạt năng lượng kiếm khí bay theo sau lưỡi kiếm
+    this.sparks = Array.from({ length: 14 }, () => ({
+      offsetX: -15 - Math.random() * 110,
+      offsetY: (Math.random() - 0.5) * 76,
+      size: 1.8 + Math.random() * 3.2,
+      speedX: 25 + Math.random() * 55,
+      phase: Math.random() * Math.PI * 2
+    }));
   }
 
   update(dt) {
+    this.age += dt;
     const prevCol = this.colPos;
     this.colPos += (this.speed / 84) * dt;
     this.life -= dt;
 
-    if (this.pirates && this.onHitPirate) {
+    // Cập nhật hạt năng lượng trôi ngược về sau
+    for (const sp of this.sparks) {
+      sp.offsetX -= sp.speedX * dt;
+      if (sp.offsetX < -135) {
+        sp.offsetX = -15 - Math.random() * 25;
+        sp.offsetY = (Math.random() - 0.5) * 76;
+      }
+    }
+
+    if (this.pirates && typeof this.onHitPirate === 'function') {
       for (const p of this.pirates) {
         if (
           p.row === this.row &&
           !p.isDead &&
           !p.isDying &&
           !this.hitSet.has(p) &&
-          p.colPos <= this.colPos + 0.35 &&
+          p.colPos <= this.colPos + 0.38 &&
           p.colPos >= prevCol - 0.85
         ) {
           this.hitSet.add(p);
@@ -147,46 +168,109 @@ export class AnimeSlashWave {
         }
       }
     }
+
     return this.life > 0 && this.colPos <= 10.2;
   }
 
   render(ctx, grid = null) {
     const pt = grid
       ? grid.gridToPixel(this.colPos, this.row + 0.5)
-      : { x: GRID_CONFIG.offsetX + this.colPos * GRID_CONFIG.cellWidth, y: GRID_CONFIG.offsetY + this.row * GRID_CONFIG.cellHeight + 45, scale: 1 };
+      : {
+          x: GRID_CONFIG.offsetX + this.colPos * GRID_CONFIG.cellWidth,
+          y: GRID_CONFIG.offsetY + this.row * GRID_CONFIG.cellHeight + 45,
+          scale: 1
+        };
+
+    const sc = pt.scale || 1;
+    // Hiệu ứng nở lớn nhẹ lúc mới chém ra cho có lực
+    const spawnScale = Math.min(1, 0.72 + this.age * 3.5);
+    const alpha = Math.min(1, this.life * 3.0);
 
     ctx.save();
     ctx.translate(pt.x, pt.y);
-    ctx.scale(pt.scale || 1, pt.scale || 1);
-    const alpha = Math.min(1, this.life * 2.5);
+    ctx.scale(sc * spawnScale, sc * spawnScale);
     ctx.globalAlpha = alpha;
 
-    const grad = ctx.createLinearGradient(-95, 0, 25, 0);
-    grad.addColorStop(0, 'rgba(0, 230, 118, 0)');
-    grad.addColorStop(0.65, 'rgba(0, 230, 118, 0.55)');
-    grad.addColorStop(1, 'rgba(185, 246, 202, 0.95)');
-
-    ctx.fillStyle = grad;
+    // 1. Vệt áp lực gió cày trên mặt đất bên dưới nhát chém
+    const groundGrad = ctx.createLinearGradient(-110, 26, 20, 26);
+    groundGrad.addColorStop(0, 'rgba(0, 230, 118, 0)');
+    groundGrad.addColorStop(0.7, 'rgba(0, 230, 118, 0.35)');
+    groundGrad.addColorStop(1, 'rgba(200, 255, 220, 0.75)');
+    ctx.fillStyle = groundGrad;
     ctx.beginPath();
-    ctx.moveTo(-95, -34);
-    ctx.quadraticCurveTo(24, 0, -95, 34);
-    ctx.lineTo(-60, 0);
+    ctx.ellipse(-35, 32, 68, 7, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 2. Đuôi kiếm khí kéo dài (Lưỡi liềm đôi uốn lượn sắc nhọn)
+    const trailGrad = ctx.createLinearGradient(-135, 0, 28, 0);
+    trailGrad.addColorStop(0, 'rgba(12, 18, 28, 0)');
+    trailGrad.addColorStop(0.35, 'rgba(0, 180, 95, 0.28)');
+    trailGrad.addColorStop(0.78, 'rgba(0, 230, 118, 0.75)');
+    trailGrad.addColorStop(1, 'rgba(220, 255, 235, 0.98)');
+
+    ctx.fillStyle = trailGrad;
+    ctx.beginPath();
+    ctx.moveTo(-130, -48);
+    ctx.bezierCurveTo(-30, -36, 18, -14, 28, 0);
+    ctx.bezierCurveTo(18, 14, -30, 36, -130, 48);
+    ctx.quadraticCurveTo(-68, 0, -130, -48);
     ctx.closePath();
     ctx.fill();
 
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 5;
-    ctx.shadowColor = '#00e676';
-    ctx.shadowBlur = 14;
+    // 3. Dải Haki Hắc Kiếm đen-tím cuộn bên trong thân sóng kiếm
+    const hakiGrad = ctx.createLinearGradient(-95, 0, 16, 0);
+    hakiGrad.addColorStop(0, 'rgba(10, 5, 20, 0)');
+    hakiGrad.addColorStop(0.65, 'rgba(20, 10, 35, 0.78)');
+    hakiGrad.addColorStop(1, 'rgba(0, 230, 118, 0.4)');
+
+    ctx.fillStyle = hakiGrad;
     ctx.beginPath();
-    ctx.arc(-24, 0, 44, -Math.PI * 0.42, Math.PI * 0.42);
+    ctx.moveTo(-95, -34);
+    ctx.quadraticCurveTo(14, 0, -95, 34);
+    ctx.quadraticCurveTo(-55, 0, -95, -34);
+    ctx.closePath();
+    ctx.fill();
+
+    // 4. Lưỡi trảm kích chính (Vòng cung trăng khuyết phát sáng mạnh)
+    ctx.save();
+    ctx.shadowColor = '#00e676';
+    ctx.shadowBlur = 18;
+
+    // Lớp viền ngoài xanh ngọc lục bảo
+    ctx.strokeStyle = '#00e676';
+    ctx.lineWidth = 7;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(-26, -46);
+    ctx.quadraticCurveTo(32, 0, -26, 46);
     ctx.stroke();
 
-    ctx.strokeStyle = '#00e676';
-    ctx.lineWidth = 8;
+    // Lõi trắng rực siêu sắc ở rìa chém
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 3.2;
     ctx.beginPath();
-    ctx.arc(-28, 0, 44, -Math.PI * 0.4, Math.PI * 0.4);
+    ctx.moveTo(-22, -44);
+    ctx.quadraticCurveTo(34, 0, -22, 44);
     ctx.stroke();
+    ctx.restore();
+
+    // 5. Tia chém phụ song song tạo cảm giác đa tầng uy lực
+    ctx.strokeStyle = 'rgba(185, 246, 202, 0.75)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-48, -32);
+    ctx.quadraticCurveTo(-2, 0, -48, 32);
+    ctx.stroke();
+
+    // 6. Các hạt năng lượng kiếm khí lấp lánh bay theo đuôi
+    for (const sp of this.sparks) {
+      const sparkAlpha = Math.max(0, 1 + sp.offsetX / 135);
+      ctx.fillStyle = sp.size > 3.5 ? `rgba(255, 255, 255, ${sparkAlpha})` : `rgba(0, 230, 118, ${sparkAlpha})`;
+      ctx.beginPath();
+      // Vẽ hạt dạng vệt chém ngang nhỏ thay vì chấm tròn đơn điệu
+      ctx.ellipse(sp.offsetX, sp.offsetY, sp.size * 2.4, sp.size * 0.55, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
 
     ctx.restore();
   }
