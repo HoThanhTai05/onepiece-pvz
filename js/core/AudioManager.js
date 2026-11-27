@@ -31,6 +31,7 @@ export class AudioManager {
     } catch {
       // Bỏ qua nếu trình duyệt chặn localStorage
     }
+    
   }
 
   init() {
@@ -471,6 +472,84 @@ export class AudioManager {
     if (this.bgmTimer) {
       clearTimeout(this.bgmTimer);
       this.bgmTimer = null;
+    }
+  }
+  /** Nhạc chờ sảnh chính: Phong cách hải chiến nhẹ nhàng (Trống trầm + Hợp âm kèn/dây Rê thứ) */
+  startTitleMusic() {
+    this.ensureContext();
+    if (this.titleMusicTimer) return;
+
+    const chords = [
+      [146.83, 220.00, 293.66, 349.23], // Dm (Rê thứ)
+      [116.54, 174.61, 233.08, 293.66], // Bb (Si giáng trưởng)
+      [130.81, 196.00, 261.63, 329.63], // C  (Đô trưởng)
+      [110.00, 164.81, 220.00, 261.63]  // Am (La thứ)
+    ];
+
+    let step = 0;
+
+    const playBar = () => {
+      if (!this.ctx || this.ctx.state === 'suspended' || this.isSilent()) return;
+      const now = this.ctx.currentTime;
+      const chord = chords[step % chords.length];
+
+      // 1. Nền kèn/dây trầm ấm ngân dài
+      chord.forEach((freq, i) => {
+        const osc = this.ctx.createOscillator();
+        const filter = this.ctx.createBiquadFilter();
+        const gain = this.ctx.createGain();
+
+        osc.type = i === 0 ? 'triangle' : 'sawtooth';
+        osc.frequency.setValueAtTime(freq, now);
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(520, now);
+
+        const noteVol = i === 0 ? 0.14 : 0.055;
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.linearRampToValueAtTime(noteVol, now + 0.8);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 3.1);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.musicGain);
+
+        osc.start(now);
+        osc.stop(now + 3.2);
+      });
+
+      // 2. Nhịp trống chiến tranh trầm nhẹ (Tùng... tùng... tùng)
+      [0, 1.5, 2.25].forEach((offset, idx) => {
+        const t = now + offset;
+        const drumOsc = this.ctx.createOscillator();
+        const drumGain = this.ctx.createGain();
+
+        drumOsc.type = 'sine';
+        drumOsc.frequency.setValueAtTime(idx === 0 ? 85 : 68, t);
+        drumOsc.frequency.exponentialRampToValueAtTime(34, t + 0.35);
+
+        const dVol = idx === 0 ? 0.25 : 0.16;
+        drumGain.gain.setValueAtTime(dVol, t);
+        drumGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.42);
+
+        drumOsc.connect(drumGain);
+        drumGain.connect(this.musicGain);
+
+        drumOsc.start(t);
+        drumOsc.stop(t + 0.45);
+      });
+
+      step++;
+    };
+
+    playBar();
+    this.titleMusicTimer = setInterval(playBar, 3000);
+  }
+
+  stopTitleMusic() {
+    if (this.titleMusicTimer) {
+      clearInterval(this.titleMusicTimer);
+      this.titleMusicTimer = null;
     }
   }
 }

@@ -3139,13 +3139,53 @@ export class GameManager {
     this.renderVolumeSlider(ctx, this.getVolumeRect());
     this.renderGoldChip(ctx, 924, 18, 126, 46);
 
-    this.renderMenuButton(ctx, 394, 306, 280, 62, '▶ CHƠI NGAY (MÀN ' + this.maxUnlockedStage + ')', '#27ae60', '#2ecc71', 20);
-    this.renderMenuButton(ctx, 394, 384, 280, 56, '🗺️ BẢN ĐỒ ĐẠI HẢI TRÌNH', '#2980b9', '#3498db', 17);
-    this.renderMenuButton(ctx, 150, 458, 240, 52, '📖 BÁCH KHOA TOÀN THƯ', '#8e44ad', '#9b59b6', 15);
-    this.renderMenuButton(ctx, 414, 458, 240, 52, '❓ HƯỚNG DẪN CHƠI', '#d35400', '#e67e22', 15);
-    this.renderMenuButton(ctx, 678, 458, 240, 52, '🏪 SHOP VÀNG', '#b7791f', '#f1c40f', 16);
+    const t = performance.now() / 1000;
+    const mx = this.mousePos ? this.mousePos.x : -1;
+    const my = this.mousePos ? this.mousePos.y : -1;
+    const isHover = (x, y, w, h) => mx >= x && mx <= x + w && my >= y && my <= y + h;
 
-    this.renderMenuButton(ctx, 20, 544, 170, 36, '🔄 Reset Tài Khoản', '#576574', '#7f8c8d', 12);
+    this.drawProButton(ctx, {
+      x: 394, y: 306, w: 280, h: 62,
+      text: '▶ CHƠI NGAY (MÀN ' + this.maxUnlockedStage + ')',
+      isPrimary: true,
+      isHovered: isHover(394, 306, 280, 62),
+      fontSize: 20
+    }, t);
+
+    this.drawProButton(ctx, {
+      x: 394, y: 384, w: 280, h: 56,
+      text: '🗺️ BẢN ĐỒ ĐẠI HẢI TRÌNH',
+      isHovered: isHover(394, 384, 280, 56),
+      fontSize: 16
+    }, t);
+
+    this.drawProButton(ctx, {
+      x: 150, y: 458, w: 240, h: 52,
+      text: '📖 BÁCH KHOA TOÀN THƯ',
+      isHovered: isHover(150, 458, 240, 52),
+      fontSize: 15
+    }, t);
+
+    this.drawProButton(ctx, {
+      x: 414, y: 458, w: 240, h: 52,
+      text: '❓ HƯỚNG DẪN CHƠI',
+      isHovered: isHover(414, 458, 240, 52),
+      fontSize: 15
+    }, t);
+
+    this.drawProButton(ctx, {
+      x: 678, y: 458, w: 240, h: 52,
+      text: '🏪 SHOP VÀNG',
+      isHovered: isHover(678, 458, 240, 52),
+      fontSize: 15
+    }, t);
+
+    this.drawProButton(ctx, {
+      x: 20, y: 544, w: 170, h: 36,
+      text: '🔄 Reset Tài Khoản',
+      isHovered: isHover(20, 544, 170, 36),
+      fontSize: 12
+    }, t);
 
     ctx.fillStyle = 'rgba(255,255,255,0.9)';
     ctx.font = '13px "Segoe UI", sans-serif';
@@ -3605,4 +3645,108 @@ export class GameManager {
 
     ctx.restore();
   }
+  /**
+   * Vẽ nút bấm phong cách Game Mobile 3D + Animation
+   * @param {CanvasRenderingContext2D} ctx
+   * @param {Object} opt { x, y, w, h, text, topColor, bottomColor, edgeColor, glowColor, isPrimary, isHovered, isPressed }
+   * @param {number} time - thời gian chạy game (tính bằng giây, ví dụ performance.now() / 1000)
+   */
+  drawProButton(ctx, opt, time) {
+    const {
+      x, y, w, h, text,
+      isPrimary = false,
+      isHovered = false,
+      isPressed = false,
+      fontSize = isPrimary ? 20 : 15
+    } = opt;
+
+    const r = 8; // Bo góc nhẹ chuẩn Kiểu 3
+    const cx = x + w / 2;
+    const cy = y + h / 2;
+
+    // 1. Hiệu ứng co giãn (Nhịp thở cho nút chính + Phóng to khi di chuột)
+    let scale = 1;
+    if (isPressed) {
+      scale = 0.96;
+    } else if (isHovered) {
+      scale = 1.05;
+    } else if (isPrimary) {
+      scale = 1 + Math.sin(time * 3.5) * 0.022;
+    }
+
+    const pulse = isPrimary ? (0.5 + 0.5 * Math.sin(time * 3.5)) : 0;
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(scale, scale);
+    ctx.translate(-w / 2, -h / 2);
+
+    // 2. Nền Kính Mờ Kiểu 3 + Hào quang tỏa sáng
+    ctx.save();
+    if (isPrimary) {
+      ctx.shadowColor = isHovered ? 'rgba(46, 204, 113, 0.9)' : `rgba(46, 204, 113, ${0.45 + pulse * 0.3})`;
+      ctx.shadowBlur = isHovered ? 24 : 16;
+      const grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, isHovered ? 'rgba(46, 204, 113, 0.95)' : 'rgba(34, 153, 84, 0.88)');
+      grad.addColorStop(1, 'rgba(20, 90, 50, 0.92)');
+      ctx.fillStyle = grad;
+    } else {
+      ctx.shadowColor = isHovered ? 'rgba(241, 196, 15, 0.6)' : 'rgba(0, 0, 0, 0.55)';
+      ctx.shadowBlur = isHovered ? 20 : 10;
+      ctx.shadowOffsetY = 4;
+      ctx.fillStyle = isHovered ? 'rgba(28, 38, 52, 0.9)' : 'rgba(14, 19, 28, 0.78)';
+    }
+
+    ctx.beginPath();
+    ctx.roundRect(0, 0, w, h, r);
+    ctx.fill();
+    ctx.restore();
+
+    // 3. Hiệu ứng Vệt Sáng Quét Chéo (Shine Sweep) gọn trong khung kính
+    if (isPrimary || isHovered) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.roundRect(0, 0, w, h, r);
+      ctx.clip();
+
+      const cycle = (time * 0.9) % 2.2; // 2.2 giây quét 1 lần
+      if (cycle < 1.0) {
+        const sweepX = -w * 0.4 + cycle * (w * 1.8);
+        const shineGrad = ctx.createLinearGradient(sweepX - 30, 0, sweepX + 30, 0);
+        shineGrad.addColorStop(0, 'rgba(255, 255, 255, 0)');
+        shineGrad.addColorStop(0.5, isPrimary ? 'rgba(255, 255, 255, 0.42)' : 'rgba(241, 196, 15, 0.28)');
+        shineGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        ctx.fillStyle = shineGrad;
+        ctx.beginPath();
+        ctx.moveTo(sweepX - 20, 0);
+        ctx.lineTo(sweepX + 25, 0);
+        ctx.lineTo(sweepX - 5, h);
+        ctx.lineTo(sweepX - 50, h);
+        ctx.closePath();
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // 4. Viền mảnh tinh tế phát sáng khi hover
+    ctx.strokeStyle = isPrimary
+      ? (isHovered ? '#b9f6ca' : '#2ecc71')
+      : (isHovered ? '#f1c40f' : 'rgba(241, 196, 15, 0.55)');
+    ctx.lineWidth = isHovered ? 2.2 : 1.4;
+    ctx.beginPath();
+    ctx.roundRect(0.7, 0.7, w - 1.4, h - 1.4, r);
+    ctx.stroke();
+
+    // 5. Chữ trắng sắc nét
+    ctx.font = `700 ${fontSize}px "Segoe UI", Roboto, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.65)';
+    ctx.fillText(text, w / 2, h / 2 + 1.5);
+    ctx.fillStyle = isHovered && !isPrimary ? '#fff3b0' : '#ffffff';
+    ctx.fillText(text, w / 2, h / 2);
+
+    ctx.restore();
+  }
+  
 }
