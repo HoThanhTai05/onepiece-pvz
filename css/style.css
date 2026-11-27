@@ -365,3 +365,23 @@ html, body {
   50% { transform: rotate(90deg); }
   100% { transform: rotate(0deg); }
 }
+
+/* Khi điện thoại đang để dọc (portrait), tự động xoay ngang toàn bộ khung game 90 độ */
+@media screen and (max-width: 900px) and (orientation: portrait) {
+  html, body {
+    width: 100vh;
+    height: 100vw;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    transform: rotate(90deg);
+    transform-origin: top left;
+    margin-left: 100vw;
+  }
+
+  /* Ẩn bảng thông báo "Hãy xoay điện thoại lại" vì game đã tự xoay rồi */
+  #rotate-warning, .rotate-overlay, .orientation-warning {
+    display: none !important;
+  }
+}
