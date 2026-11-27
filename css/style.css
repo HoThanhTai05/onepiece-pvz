@@ -366,22 +366,15 @@ html, body {
   100% { transform: rotate(0deg); }
 }
 
-/* Khi điện thoại đang để dọc (portrait), tự động xoay ngang toàn bộ khung game 90 độ */
+/* Khi điện thoại đang để dọc (portrait): hiện bảng nhắc xoay ngang phủ kín, không xoay lệch khung */
 @media screen and (max-width: 900px) and (orientation: portrait) {
-  html, body {
-    width: 100vh;
-    height: 100vw;
-    overflow: hidden;
+  #rotateHint {
+    display: flex !important;
     position: fixed;
-    top: 0;
-    left: 0;
-    transform: rotate(90deg);
-    transform-origin: top left;
-    margin-left: 100vw;
-  }
-
-  /* Ẩn bảng thông báo "Hãy xoay điện thoại lại" vì game đã tự xoay rồi */
-  #rotate-warning, .rotate-overlay, .orientation-warning {
-    display: none !important;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 99999;
+    background: rgba(10, 14, 21, 0.96);
   }
 }

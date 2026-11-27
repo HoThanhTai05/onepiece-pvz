@@ -45,7 +45,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     // Hiện nhắc xoay ngang nếu đang cầm dọc điện thoại
-    if (windowHeight > windowWidth && windowWidth < 768 && !portraitDismissed) {
+    if (windowHeight > windowWidth && windowWidth < 900) {
       if (rotateHint) rotateHint.style.display = 'flex';
     } else {
       if (rotateHint) rotateHint.style.display = 'none';
@@ -108,7 +108,16 @@ window.addEventListener('DOMContentLoaded', () => {
       window.scrollTo(0, 1);
     }
 
-    portraitDismissed = true;
+    // Xóa dòng portraitDismissed = true; ở đây
+    if (isIOS && window.innerHeight > window.innerWidth) {
+      const pTag = rotateHint ? rotateHint.querySelector('p') : null;
+      if (pTag) {
+        pTag.innerHTML = 'Trên iPhone, hãy vuốt mở <b>Trung tâm điều khiển</b>, tắt biểu tượng <b>Khóa hướng dọc</b> rồi xoay ngang máy lại nhé!';
+        pTag.style.color = '#f1c40f';
+      }
+    }
+    updateFsLabel();
+    resizeGame();
     updateFsLabel();
     resizeGame();
   }
@@ -154,13 +163,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
   if (rotateFsBtn) {
     rotateFsBtn.addEventListener('click', () => enterLandscapeFullscreen());
-  }
-
-  if (skipRotateBtn) {
-    skipRotateBtn.addEventListener('click', () => {
-      portraitDismissed = true;
-      resizeGame();
-    });
   }
 
   // Prevent default scroll/bounce on mobile touch
